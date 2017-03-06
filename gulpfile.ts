@@ -6,6 +6,7 @@ const tsc = require("gulp-typescript");
 const sourcemaps = require('gulp-sourcemaps');
 const tsProject = tsc.createProject("tsconfig.json");
 const tslint = require('gulp-tslint');
+const sass = require("gulp-sass");
 
 /**
  * Remove build directory.
@@ -38,10 +39,20 @@ gulp.task("compile", ["tslint"], () => {
 });
 
 /**
- * Copy all resources that are not TypeScript files into build directory.
+ * Compile TypeScript sources and create sourcemaps in build directory.
+ */
+gulp.task("sass", () => {
+    return gulp.src("src/**/*.scss")
+        .pipe(sass().on('error', sass.logError))
+        .pipe(sourcemaps.write(".", {sourceRoot: '/src'}))
+        .pipe(gulp.dest("build"));
+});
+
+/**
+ * Copy all resources that are not TypeScript or SASS files into build directory.
  */
 gulp.task("resources", () => {
-    return gulp.src(["src/**/*", "!**/*.ts"])
+    return gulp.src(["src/**/*", "!**/*.ts", "!**/*.scss"])
         .pipe(gulp.dest("build"));
 });
 
@@ -70,6 +81,9 @@ gulp.task('watch', function () {
     });
     gulp.watch(["src/**/*.html", "src/**/*.css"], ['resources']).on('change', function (e) {
         console.log('Resource file ' + e.path + ' has been changed. Updating.');
+    });
+    gulp.watch(["src/**/*.scss"], ['sass']).on('change', function (e) {
+        console.log('Sass file ' + e.path + ' has been changed. Updating.');
     });
 });
 
