@@ -90,6 +90,6 @@ gulp.task('watch', function () {
 /**
  * Build the project.
  */
-gulp.task("build", ['compile', 'resources', 'libs'], () => {
+gulp.task("build", ['compile', 'resources', 'sass', 'libs'], () => {
     console.log("Building the project ...");
 });
